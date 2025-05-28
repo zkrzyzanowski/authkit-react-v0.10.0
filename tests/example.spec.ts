@@ -2,24 +2,6 @@ import { test, expect } from "@playwright/test";
 
 test("can login in test", async ({ page }) => {
   await page.route(
-    "https://*.workos.com/user_management/authorize*",
-    async (route) => {
-      const response = await route.fetch();
-      let body = await response.text();
-
-      await route.fulfill({
-        response,
-        body,
-        headers: {
-          ...response.headers,
-          Location: `https://auth.jedfoundation.org/user_management/authorize?response_type=code&client_id=${
-            import.meta.env.VITE_WORKOS_CLIENT_ID
-          }&redirect_uri=http%3A%2F%2Flocalhost%3A5173&provider=authkit`,
-        },
-      });
-    }
-  );
-  await page.route(
     "https://*.workos.com/user_management/authenticate",
     async (route) => {
       await route.fulfill({
