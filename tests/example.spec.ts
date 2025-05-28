@@ -32,5 +32,5 @@ test("can login in test", async ({ page }) => {
 
   await page.goto("/");
 
-  await expect(page).toHaveTitle(/Playwright/);
+  await expect(page.getByText("sign out")).toBeVisible();
 });
