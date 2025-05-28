@@ -5,10 +5,12 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useNavigate,
 } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { AuthKitProvider } from "@workos-inc/authkit-react";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -24,6 +26,8 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const navigate = useNavigate();
+
   return (
     <html lang="en">
       <head>
@@ -33,7 +37,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <AuthKitProvider
+          devMode={import.meta.env.VITE_APP_ENV !== "production"}
+          clientId={import.meta.env.VITE_WORKOS_CLIENT_ID}
+          onRedirectCallback={({ state }) => {
+            if (state?.returnTo) {
+              navigate(state.returnTo);
+            }
+          }}
+        >
+          {children}
+        </AuthKitProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -72,4 +86,8 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
       )}
     </main>
   );
+}
+
+export function HydrateFallback() {
+  return <>Loading...</>;
 }

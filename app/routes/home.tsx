@@ -1,5 +1,7 @@
 import type { Route } from "./+types/home";
 import { Welcome } from "../welcome/welcome";
+import { useAuth } from "@workos-inc/authkit-react";
+import { useEffect } from "react";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -9,5 +11,20 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  return <Welcome />;
+  const { user, isLoading, signIn, signOut } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      signIn({
+        state: { returnTo: location },
+      });
+    }
+  }, [isLoading, signIn, user, location]);
+
+  return (
+    <>
+      <button onClick={() => signOut()}>Sign Out</button>
+      <Welcome />
+    </>
+  );
 }
